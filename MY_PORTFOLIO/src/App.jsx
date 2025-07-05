@@ -10,7 +10,7 @@ import Testimonials from './components/Testimonials';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App w-full overflow-x-hidden">
       <Navigation />
       <Hero />
       <About />

@@ -3,7 +3,9 @@ import React, { useState, useEffect } from 'react';
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuAnimating, setIsMobileMenuAnimating] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [savedScrollPosition, setSavedScrollPosition] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,63 +16,71 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Track active section with Intersection Observer
-  useEffect(() => {
+  // Function to detect current active section
+  const getCurrentActiveSection = (scrollPosition = null) => {
     const sections = document.querySelectorAll('section[id]');
-    const navItems = ['home', 'about', 'projects', 'skills', 'testimonials', 'contact'];
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const sectionId = entry.target.id;
-            if (navItems.includes(sectionId)) {
-              setActiveSection(sectionId);
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.3,
-        rootMargin: '-80px 0px -80px 0px'
+    const scrollY = scrollPosition !== null ? scrollPosition : window.scrollY;
+    
+    // Check if we're at the very top (home section)
+    if (scrollY < 50) {
+      return 'home';
+    }
+    
+    let currentSection = 'home'; // Default fallback
+    
+    // Check each section to find which one the user is currently in
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+      const sectionBottom = sectionTop + sectionHeight;
+      
+      // Account for navbar height and add some buffer
+      const adjustedTop = sectionTop - 120;
+      const adjustedBottom = sectionBottom - 120;
+      
+      // Check if current scroll position is within this section
+      if (scrollY >= adjustedTop && scrollY < adjustedBottom) {
+        currentSection = section.id;
       }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-
-    // Handle scroll to top (home section)
-    const handleScroll = () => {
-      if (window.scrollY < 100) {
-        setActiveSection('home');
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      sections.forEach((section) => observer.unobserve(section));
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+    });
+    
+    return currentSection;
+  };
 
   // Prevent scrolling when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
-      // Disable scrolling
+      // Save current scroll position FIRST
+      const scrollY = window.scrollY;
+      setSavedScrollPosition(scrollY);
+      
+      // Always update active section when mobile menu opens
+      const currentSection = getCurrentActiveSection(scrollY);
+      setActiveSection(currentSection);
+      
+      // THEN disable scrolling (this changes the DOM)
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
-      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.top = `-${scrollY}px`;
+      
+      // Start animation
+      setIsMobileMenuAnimating(true);
     } else {
-      // Re-enable scrolling
-      const scrollY = document.body.style.top;
+      // Re-enable scrolling and restore position
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
       document.body.style.top = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      
+      // Restore scroll position immediately
+      const scrollPos = savedScrollPosition;
+      if (scrollPos >= 0) {
+        window.scrollTo(0, scrollPos);
       }
+      
+      // End animation
+      setIsMobileMenuAnimating(false);
     }
 
     // Cleanup function
@@ -80,7 +90,7 @@ const Navigation = () => {
       document.body.style.width = '';
       document.body.style.top = '';
     };
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, savedScrollPosition, activeSection]);
 
   const navItems = [
     { label: 'Home', href: '#home', id: 'home' },
@@ -91,16 +101,72 @@ const Navigation = () => {
     { label: 'Contact', href: '#contact', id: 'contact' }
   ];
 
+
+
   const scrollToSection = (href) => {
-    if (href === '#home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+    // Close mobile menu first
     setIsMobileMenuOpen(false);
+
+    // Use setTimeout to ensure menu closes and scroll position is restored
+    setTimeout(() => {
+      if (href === '#home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const element = document.querySelector(href);
+        if (element) {
+          const headerHeight = 80; // Account for fixed navbar
+          const elementPosition = element.offsetTop - headerHeight;
+
+          window.scrollTo({
+            top: elementPosition,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }, 300); // Increased delay to ensure proper state restoration
+  };
+
+  // Function to just close mobile menu without scrolling
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+
+    if (!isMobileMenuOpen) {
+      // Save current scroll position FIRST
+      const scrollY = window.scrollY;
+      setSavedScrollPosition(scrollY);
+
+      // Always update active section when mobile menu opens
+      const currentSection = getCurrentActiveSection(scrollY);
+      setActiveSection(currentSection);
+
+      // THEN disable scrolling (this changes the DOM)
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${scrollY}px`;
+
+      // Start animation
+      setIsMobileMenuAnimating(true);
+    } else {
+      // Re-enable scrolling and restore position
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+
+      // Restore scroll position immediately
+      const scrollPos = savedScrollPosition;
+      if (scrollPos >= 0) {
+        window.scrollTo(0, scrollPos);
+      }
+
+      // End animation
+      setIsMobileMenuAnimating(false);
+    }
   };
 
   return (
@@ -109,19 +175,7 @@ const Navigation = () => {
     }`}>
       <div className="container-max px-4 md:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <div className="flex items-center">
-            <button 
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="flex items-center hover:opacity-80 transition-opacity"
-            >
-              <img 
-                src="/website-logo.png" 
-                alt="Segun Adebowale - Full-Stack Developer" 
-                className="h-10 w-auto"
-              />
-            </button>
-          </div>
+      
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -154,7 +208,7 @@ const Navigation = () => {
 
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={toggleMobileMenu}
             className="md:hidden p-2 rounded-lg hover:bg-primary/10 transition-colors"
           >
             <svg 
@@ -184,11 +238,13 @@ const Navigation = () => {
 
         {/* Mobile Menu - Full Screen Overlay */}
         {isMobileMenuOpen && (
-          <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col">
+          <div className={`md:hidden fixed inset-0 bg-white z-50 flex flex-col transition-all duration-300 ${
+            isMobileMenuAnimating ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-full'
+          }`}>
             {/* Header with Close Button */}
-            <div className="flex items-center justify-end p-6">
+            <div className="flex items-center justify-end p-6 animate-fade-in">
               <button
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={closeMobileMenu}
                 className="p-2 rounded-lg hover:bg-slateGray/10 transition-colors"
               >
                 <svg 
@@ -214,22 +270,25 @@ const Navigation = () => {
                   <button
                     key={item.label}
                     onClick={() => scrollToSection(item.href)}
-                    className={`relative block w-full text-center text-3xl font-heading font-semibold transition-all duration-200 transform hover:scale-105 ${
+                    className={`relative block w-full text-center text-3xl font-heading font-semibold transition-all duration-200 transform hover:scale-105 animate-fade-in ${
                       activeSection === item.id ? 'text-primary mobile-nav-active' : 'text-text hover:text-primary'
                     }`}
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                    style={{ 
+                      animationDelay: `${index * 0.1 + 0.2}s`,
+                      animationFillMode: 'both'
+                    }}
                   >
                     {item.label}
                     {/* Active indicator for mobile */}
                     {activeSection === item.id && (
-                      <span className="absolute -right-8 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-primary rounded-full nav-active-indicator"></span>
+                      <span className="absolute -right-8 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-primary rounded-full animate-pulse"></span>
                     )}
                   </button>
                 ))}
               </div>
 
               {/* CTA Button */}
-              <div className="mt-12">
+              <div className="mt-12 animate-fade-in" style={{ animationDelay: '0.8s', animationFillMode: 'both' }}>
                 <button 
                   onClick={() => scrollToSection('#contact')}
                   className="btn-primary text-lg py-4 px-8"

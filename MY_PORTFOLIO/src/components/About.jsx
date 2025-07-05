@@ -12,9 +12,9 @@ const About = () => {
     <section 
       id="about" 
       ref={sectionRef}
-      className={`section-padding bg-gradient-to-br from-background to-primary/5 scroll-animate ${isSectionVisible ? 'animate' : ''}`}
+      className={`section-padding bg-gradient-to-br from-background to-primary/5 overflow-hidden scroll-animate ${isSectionVisible ? 'animate' : ''}`}
     >
-      <div className="container-max">
+      <div className="container-max w-full max-w-6xl mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <div 
@@ -77,7 +77,7 @@ const About = () => {
           {/* Image/Visual */}
           <div 
             ref={imageRef}
-            className={`relative scroll-animate-right ${isImageVisible ? 'animate' : ''}`}
+            className={`relative overflow-hidden scroll-animate-right ${isImageVisible ? 'animate' : ''}`}
           >
             <div className="relative z-10">
               {/* Professional logo */}
@@ -92,29 +92,6 @@ const About = () => {
               {/* Decorative elements */}
               <div className="absolute -top-6 -right-6 w-24 h-24 bg-accent/20 rounded-full blur-xl"></div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary/20 rounded-full blur-xl"></div>
-            </div>
-            
-            {/* Floating cards */}
-            <div className="absolute -top-12 -left-12 bg-white rounded-lg shadow-lg p-4 card animate-float">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-text">Clean Code</span>
-              </div>
-            </div>
-
-            <div className="absolute -bottom-12 -right-12 bg-white rounded-lg shadow-lg p-4 card animate-float" style={{animationDelay: '1s'}}>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-text">Responsive</span>
-              </div>
             </div>
           </div>
         </div>

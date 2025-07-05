@@ -24,7 +24,10 @@ const Navigation = () => {
           }
         });
       },
-      { threshold: 0.6 }
+      { 
+        threshold: 0.3, // Reduced threshold for better mobile experience
+        rootMargin: '-80px 0px -50% 0px' // Account for fixed navbar
+      }
     );
 
     sections.forEach(section => {
@@ -48,11 +51,26 @@ const Navigation = () => {
   }, [isMenuOpen]);
 
   const scrollToSection = (href) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false); // Close mobile menu after clicking
-    }
+    // Close mobile menu immediately
+    setIsMenuOpen(false);
+    
+    // Wait a bit for menu to close, then scroll
+    setTimeout(() => {
+      const targetId = href.replace('#', '');
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        // Calculate position accounting for fixed navbar
+        const elementPosition = targetElement.offsetTop;
+        const offsetPosition = elementPosition - 80;
+        
+        // Scroll to position
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 150);
   };
 
   const toggleMenu = () => {
@@ -60,18 +78,11 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
-      <div className="max-w-6xl mx-auto px-4">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 w-full">
         <div className="flex items-center justify-between py-4">
-          {/* Logo */}
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-900 to-yellow-400 rounded-lg flex items-center justify-center text-white font-bold mr-3">
-              SA
-            </div>
-            <span className="text-xl font-semibold text-gray-800">
-              Segun Adebowale
-            </span>
-          </div>
+          {/* Empty div to maintain flexbox layout */}
+          <div></div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -115,8 +126,8 @@ const Navigation = () => {
 
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-t border-gray-200">
-            <div className="px-4 py-2 space-y-1">
+          <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-t border-gray-200 max-w-full overflow-hidden">
+            <div className="px-4 py-2 space-y-1 max-w-6xl mx-auto">
               {navItems.map((item) => (
                 <button
                   key={item.name}
