@@ -63,6 +63,115 @@
   .animate-fade-in {
     animation: fadeIn 0.5s ease-in-out;
   }
+  
+  /* Scroll Animation Classes */
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+  }
+  
+  .scroll-animate.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .scroll-animate-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 0.8s ease-out;
+  }
+  
+  .scroll-animate-left.animate {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .scroll-animate-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.8s ease-out;
+  }
+  
+  .scroll-animate-right.animate {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .scroll-animate-scale {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.6s ease-out;
+  }
+  
+  .scroll-animate-scale.animate {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .scroll-animate-stagger {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
+  }
+  
+  .scroll-animate-stagger.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Navigation active indicators */
+.nav-active-indicator {
+  transition: all 0.3s ease;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+}
+
+.nav-item-active {
+  position: relative;
+  font-weight: 600;
+}
+
+.nav-item-active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #3B82F6;
+  border-radius: 50%;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Mobile nav active indicator */
+.mobile-nav-active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(240, 195, 48, 0.1) 100%);
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin: -16px -24px;
+}
+
+.mobile-nav-active::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 30px;
+  background: linear-gradient(135deg, #3B82F6 0%, #F0C330 100%);
+  border-radius: 2px;
 }
 
 /* Additional animations */

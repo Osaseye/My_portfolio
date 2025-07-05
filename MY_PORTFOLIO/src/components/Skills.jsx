@@ -1,6 +1,12 @@
 import React from 'react';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 
 const Skills = () => {
+  const [sectionRef, isSectionVisible] = useScrollAnimation({ threshold: 0.1 });
+  const [headerRef, isHeaderVisible] = useScrollAnimation({ threshold: 0.2 });
+  const [skillsRef, isSkillsVisible] = useScrollAnimation({ threshold: 0.2 });
+  const [servicesRef, isServicesVisible] = useScrollAnimation({ threshold: 0.2 });
+
   const skills = [
     {
       category: "Frontend Development",
@@ -81,10 +87,17 @@ const Skills = () => {
   ];
 
   return (
-    <section id="skills" className="section-padding bg-gradient-to-br from-background to-primary/5">
+    <section 
+      id="skills" 
+      ref={sectionRef}
+      className={`section-padding bg-gradient-to-br from-background to-primary/5 scroll-animate ${isSectionVisible ? 'animate' : ''}`}
+    >
       <div className="container-max">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div 
+          ref={headerRef}
+          className={`text-center mb-16 scroll-animate ${isHeaderVisible ? 'animate' : ''}`}
+        >
           <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
             Skills & <span className="text-gradient">Expertise</span>
           </h2>
@@ -94,12 +107,15 @@ const Skills = () => {
         </div>
 
         {/* Skills Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+        <div 
+          ref={skillsRef}
+          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20 scroll-animate ${isSkillsVisible ? 'animate' : ''}`}
+        >
           {skills.map((skillGroup, index) => (
             <div 
               key={index} 
-              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in"
-              style={{animationDelay: `${index * 0.1}s`}}
+              className={`bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 scroll-animate-stagger ${isSkillsVisible ? 'animate' : ''}`}
+              style={{transitionDelay: `${index * 0.1}s`}}
             >
               <div className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white mb-4">
@@ -124,8 +140,11 @@ const Skills = () => {
         </div>
 
         {/* Services Section */}
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
-          <div className="text-center mb-12">
+        <div 
+          ref={servicesRef}
+          className={`bg-white rounded-3xl p-8 md:p-12 shadow-2xl scroll-animate ${isServicesVisible ? 'animate' : ''}`}
+        >
+          <div className={`text-center mb-12 scroll-animate ${isServicesVisible ? 'animate' : ''}`} style={{transitionDelay: '0.1s'}}>
             <h3 className="text-3xl md:text-4xl font-heading font-bold mb-4">
               What I Can <span className="text-gradient">Build For You</span>
             </h3>
@@ -138,7 +157,8 @@ const Skills = () => {
             {services.map((service, index) => (
               <div 
                 key={index}
-                className="group p-6 rounded-xl border border-primary/10 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+                className={`group p-6 rounded-xl border border-primary/10 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 scroll-animate-stagger ${isServicesVisible ? 'animate' : ''}`}
+                style={{transitionDelay: `${0.2 + index * 0.1}s`}}
               >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-lg flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform">

@@ -4,8 +4,15 @@ import alusoftLogo from '../assets/Alusoft.jpg';
 import kchairLogo from '../assets/kchairandnails.jpg';
 import otakuLogo from '../assets/OTAKU_PLANNER_LOGO-removebg-preview.png';
 import mynextreadLogo from '../assets/mynextread-no-bg.png';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 
 const Testimonials = () => {
+  // Scroll animation hooks
+  const [headerRef, headerVisible] = useScrollAnimation({ threshold: 0.1 });
+  const [testimonialsRef, testimonialsVisible] = useScrollAnimation({ threshold: 0.1 });
+  const [clientsRef, clientsVisible] = useScrollAnimation({ threshold: 0.1 });
+  const [ctaRef, ctaVisible] = useScrollAnimation({ threshold: 0.1 });
+
   const Testimonials = [
     {   
       id: 1,
@@ -65,7 +72,10 @@ const Testimonials = () => {
     <section id="testimonials" className="section-padding bg-gradient-to-br from-primary/5 to-accent/5">
       <div className="container-max">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div 
+          ref={headerRef}
+          className={`text-center mb-16 scroll-animate-scale ${headerVisible ? 'animate' : ''}`}
+        >
           <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
             What Clients <span className="text-gradient">Say</span>
           </h2>
@@ -75,12 +85,15 @@ const Testimonials = () => {
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div 
+          ref={testimonialsRef}
+          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 scroll-animate-stagger ${testimonialsVisible ? 'animate' : ''}`}
+        >
           {Testimonials.map((testimonial, index) => (
             <div 
               key={testimonial.id}
-              className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 animate-fade-in"
-              style={{animationDelay: `${index * 0.2}s`}}
+              className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
+              style={{animationDelay: `${index * 0.1}s`}}
             >
               {/* Quote Icon */}
               <div className="text-accent mb-4">
@@ -118,7 +131,10 @@ const Testimonials = () => {
         </div>
 
         {/* Clients Section */}
-        <div className="bg-white rounded-2xl p-8 md:p-12 shadow-sm">
+        <div 
+          ref={clientsRef}
+          className={`bg-white rounded-2xl p-8 md:p-12 shadow-sm scroll-animate-left ${clientsVisible ? 'animate' : ''}`}
+        >
           <h3 className="text-3xl font-heading font-bold text-center mb-12 text-primary">
             Trusted By Amazing Clients
           </h3>
@@ -128,6 +144,7 @@ const Testimonials = () => {
               <div 
                 key={index}
                 className="text-center p-6 rounded-lg hover:bg-background/50 transition-all duration-300 group"
+                style={{animationDelay: `${index * 0.1}s`}}
               >
                 <div className="mb-4 group-hover:scale-110 transition-transform duration-300 flex justify-center">
                   <img 
@@ -144,7 +161,10 @@ const Testimonials = () => {
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-12">
+        <div 
+          ref={ctaRef}
+          className={`text-center mt-12 scroll-animate-scale ${ctaVisible ? 'animate' : ''}`}
+        >
           <p className="text-lg text-slateGray mb-6">
             Ready to join these satisfied clients?
           </p>

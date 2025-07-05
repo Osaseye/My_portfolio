@@ -1,20 +1,30 @@
 import React from 'react';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 import crownlithImage from '../assets/crownlith.png';
 import kcHairImage from '../assets/kchairandnails.jpg';
 import otakuPlannerImage from '../assets/OTAKU PLANNER LOGO.png';
 import myNextReadImage from '../assets/mynextread.png'; // Assuming you have an image for MyNextRead
 
 const Projects = () => {
+  const [sectionRef, isSectionVisible] = useScrollAnimation({ threshold: 0.1 });
+  const [headerRef, isHeaderVisible] = useScrollAnimation({ threshold: 0.2 });
+  const [project1Ref, isProject1Visible] = useScrollAnimation({ threshold: 0.2 });
+  const [project2Ref, isProject2Visible] = useScrollAnimation({ threshold: 0.2 });
+  const [project3Ref, isProject3Visible] = useScrollAnimation({ threshold: 0.2 });
+  const [project4Ref, isProject4Visible] = useScrollAnimation({ threshold: 0.2 });
+
   const projects = [
     {
       id: 1,
       title: "Crownlith Marine & Logistics",
-      description: "Corporate logistics site built with React + Tailwind. Clean, professional layout tailored to brand identity. Fully responsive for mobile + desktop. Built and deployed V1 in <1 week for ₦150K contract.",
+      description: "Corporate logistics site built with React + Tailwind. Clean, professional layout tailored to brand identity. Fully responsive for mobile + desktop.",
       image: crownlithImage,
-      techStack: ["React", "Tailwind CSS", "JavaScript", "Vercel"],
+      techStack: ["React", "Tailwind CSS", "JavaScript"],
       liveLink: "https://crownlithlogistics.vercel.app",
       showLiveDemo: true,
-      category: "Corporate Website"
+      category: "Corporate Website",
+      ref: project1Ref,
+      isVisible: isProject1Visible
     },
     {
       id: 2,
@@ -24,7 +34,9 @@ const Projects = () => {
       techStack: ["React", "Tailwind CSS", "JavaScript", "Responsive Design"],
       liveLink: "https://osaseye.github.io/KC-Hair-and-Nails-/",
       showLiveDemo: true,
-      category: "Business Website"
+      category: "Business Website",
+      ref: project2Ref,
+      isVisible: isProject2Visible
     },
     {
       id: 3,
@@ -34,7 +46,9 @@ const Projects = () => {
       techStack: ["React", "Node.js", "Express", "MySQL", "JWT"],
       liveLink: "#",
       showLiveDemo: false,
-      category: "Productivity App"
+      category: "Productivity App",
+      ref: project3Ref,
+      isVisible: isProject3Visible
     },
     {
       id: 4,
@@ -44,15 +58,24 @@ const Projects = () => {
       techStack: ["React", "Flask", "Python", "MangaDex API"],
       liveLink: "#",
       showLiveDemo: false,
-      category: "API Integration"
+      category: "API Integration",
+      ref: project4Ref,
+      isVisible: isProject4Visible
     }
   ];
 
   return (
-    <section id="projects" className="section-padding bg-white">
+    <section 
+      id="projects" 
+      ref={sectionRef}
+      className={`section-padding bg-white scroll-animate ${isSectionVisible ? 'animate' : ''}`}
+    >
       <div className="container-max">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div 
+          ref={headerRef}
+          className={`text-center mb-16 scroll-animate ${isHeaderVisible ? 'animate' : ''}`}
+        >
           <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
             Featured <span className="text-gradient">Projects</span>
           </h2>
@@ -65,9 +88,10 @@ const Projects = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <div 
-              key={project.id} 
-              className="card group animate-fade-in"
-              style={{animationDelay: `${index * 0.2}s`}}
+              key={project.id}
+              ref={project.ref}
+              className={`card group scroll-animate-stagger ${project.isVisible ? 'animate' : ''}`}
+              style={{transitionDelay: `${index * 0.1}s`}}
             >
               {/* Project Image */}
               <div className="relative overflow-hidden rounded-lg mb-6">

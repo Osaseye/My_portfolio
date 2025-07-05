@@ -1,6 +1,11 @@
 import React from 'react';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 
 const Footer = () => {
+  // Scroll animation hooks
+  const [footerRef, footerVisible] = useScrollAnimation({ threshold: 0.1 });
+  const [bottomRef, bottomVisible] = useScrollAnimation({ threshold: 0.1 });
+
   const currentYear = new Date().getFullYear();
 
   const scrollToSection = (href) => {
@@ -13,9 +18,12 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-primary to-primary/90 text-white py-16">
       <div className="container-max">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div 
+          ref={footerRef}
+          className={`grid grid-cols-1 md:grid-cols-4 gap-8 scroll-animate-stagger ${footerVisible ? 'animate' : ''}`}
+        >
           {/* Brand & Description */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2" style={{animationDelay: '0.1s'}}>
             <div className="flex items-center mb-6">
               <img 
                 src="/website-logo.png" 
@@ -59,7 +67,7 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div style={{animationDelay: '0.2s'}}>
             <h4 className="text-xl font-heading font-semibold mb-6">Quick Links</h4>
             <ul className="space-y-3">
               <li>
@@ -114,7 +122,7 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div style={{animationDelay: '0.3s'}}>
             <h4 className="text-xl font-heading font-semibold mb-6">Get In Touch</h4>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
@@ -158,7 +166,10 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/20 mt-12 pt-8 text-center">
+        <div 
+          ref={bottomRef}
+          className={`border-t border-white/20 mt-12 pt-8 text-center scroll-animate-scale ${bottomVisible ? 'animate' : ''}`}
+        >
           <p className="text-white/80 text-lg">
             © {currentYear} Segun Adebowale. All rights reserved. Built with React & Tailwind CSS.
           </p>

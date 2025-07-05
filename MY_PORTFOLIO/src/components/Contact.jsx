@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 
 const Contact = () => {
+  const [sectionRef, isSectionVisible] = useScrollAnimation({ threshold: 0.1 });
+  const [headerRef, isHeaderVisible] = useScrollAnimation({ threshold: 0.2 });
+  const [formRef, isFormVisible] = useScrollAnimation({ threshold: 0.2 });
+  const [infoRef, isInfoVisible] = useScrollAnimation({ threshold: 0.2 });
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -122,10 +128,17 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="section-padding bg-white">
+    <section 
+      id="contact" 
+      ref={sectionRef}
+      className={`section-padding bg-white scroll-animate ${isSectionVisible ? 'animate' : ''}`}
+    >
       <div className="container-max">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div 
+          ref={headerRef}
+          className={`text-center mb-16 scroll-animate ${isHeaderVisible ? 'animate' : ''}`}
+        >
           <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
             Let's Work <span className="text-gradient">Together</span>
           </h2>
@@ -136,7 +149,10 @@ const Contact = () => {
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl p-8">
+          <div 
+            ref={formRef}
+            className={`bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl p-8 scroll-animate-left ${isFormVisible ? 'animate' : ''}`}
+          >
             <h3 className="text-2xl font-heading font-semibold mb-6 text-primary">
               Send me a message
             </h3>

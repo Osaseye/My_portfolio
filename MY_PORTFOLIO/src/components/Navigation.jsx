@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -11,6 +12,45 @@ const Navigation = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Track active section with Intersection Observer
+  useEffect(() => {
+    const sections = document.querySelectorAll('section[id]');
+    const navItems = ['home', 'about', 'projects', 'skills', 'testimonials', 'contact'];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.id;
+            if (navItems.includes(sectionId)) {
+              setActiveSection(sectionId);
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.3,
+        rootMargin: '-80px 0px -80px 0px'
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    // Handle scroll to top (home section)
+    const handleScroll = () => {
+      if (window.scrollY < 100) {
+        setActiveSection('home');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Prevent scrolling when mobile menu is open
@@ -43,12 +83,12 @@ const Navigation = () => {
   }, [isMobileMenuOpen]);
 
   const navItems = [
-    { label: 'Home', href: '#home' },
-    { label: 'About', href: '#about' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Skills', href: '#skills' },
-    { label: 'Testimonials', href: '#testimonials' },
-    { label: 'Contact', href: '#contact' }
+    { label: 'Home', href: '#home', id: 'home' },
+    { label: 'About', href: '#about', id: 'about' },
+    { label: 'Projects', href: '#projects', id: 'projects' },
+    { label: 'Skills', href: '#skills', id: 'skills' },
+    { label: 'Testimonials', href: '#testimonials', id: 'testimonials' },
+    { label: 'Contact', href: '#contact', id: 'contact' }
   ];
 
   const scrollToSection = (href) => {
@@ -89,9 +129,15 @@ const Navigation = () => {
               <button
                 key={item.label}
                 onClick={() => scrollToSection(item.href)}
-                className="text-text hover:text-primary transition-colors font-medium"
+                className={`relative text-text hover:text-primary transition-all duration-300 font-medium ${
+                  activeSection === item.id ? 'text-primary nav-item-active' : ''
+                }`}
               >
                 {item.label}
+                {/* Active indicator */}
+                {activeSection === item.id && (
+                  <span className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-primary rounded-full nav-active-indicator"></span>
+                )}
               </button>
             ))}
           </div>
@@ -168,10 +214,16 @@ const Navigation = () => {
                   <button
                     key={item.label}
                     onClick={() => scrollToSection(item.href)}
-                    className="block w-full text-center text-3xl font-heading font-semibold text-text hover:text-primary transition-colors transform hover:scale-105 transition-transform duration-200"
+                    className={`relative block w-full text-center text-3xl font-heading font-semibold transition-all duration-200 transform hover:scale-105 ${
+                      activeSection === item.id ? 'text-primary mobile-nav-active' : 'text-text hover:text-primary'
+                    }`}
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     {item.label}
+                    {/* Active indicator for mobile */}
+                    {activeSection === item.id && (
+                      <span className="absolute -right-8 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-primary rounded-full nav-active-indicator"></span>
+                    )}
                   </button>
                 ))}
               </div>
